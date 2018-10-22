@@ -2,6 +2,11 @@ from requests import get
 from bs4 import BeautifulSoup
 import csv, sys, getopt
 
+# default parameters
+result_file_name = 'olx_room_data.csv'
+city = 'Warszawa'
+number_of_offers = 0
+
 # get parameters
 try:
     opts, args = getopt.getopt(sys.argv[1:], "c:o:n:", ["city=", "ofile="])
@@ -13,12 +18,11 @@ for opt, arg in opts:
     if opt in ("-c", "--city"):
         city = arg
     elif opt in ("-o", "--ofile"):
-        outputfile = arg
+        result_file_name = arg
     elif opt in ("-n", "--offers-number"):
-        number_of_offers = arg
+        number_of_offers = int(arg)
 
 # statics
-result_file_name = 'olx_room_data.csv' if not outputfile else outputfile
 olx_base_url = 'https://www.olx.pl'
 olx_url = '{0}/nieruchomosci/stancje-pokoje/{1}/?view=list'.format(olx_base_url, city)
 file_name = 'olx_room_data.csv'
@@ -40,6 +44,9 @@ offer_list = []
 
 # process offer
 for idx, url in enumerate(offer_urls):
+    if number_of_offers > 0 and number_of_offers == idx:
+        break
+
     # check if not an advertisement
     if(olx_base_url not in url):
         continue
