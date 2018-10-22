@@ -1,9 +1,11 @@
 from requests import get
 from bs4 import BeautifulSoup
-import csv, sys, getopt
+import csv, sys, getopt, time, datetime
 
 # default parameters
-result_file_name = 'olx_room_data.csv'
+result_file_name = 'olx_room_data-{0}.csv'.format(datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S'))
+print(result_file_name)
+exit
 city = 'Warszawa'
 number_of_offers = 0
 page_number = 1
