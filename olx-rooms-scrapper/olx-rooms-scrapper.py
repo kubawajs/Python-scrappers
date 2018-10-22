@@ -6,6 +6,7 @@ import csv, sys, getopt
 result_file_name = 'olx_room_data.csv'
 city = 'Warszawa'
 number_of_offers = 0
+page_number = 1
 
 # get parameters
 try:
@@ -24,20 +25,31 @@ for opt, arg in opts:
 
 # statics
 olx_base_url = 'https://www.olx.pl'
-olx_url = '{0}/nieruchomosci/stancje-pokoje/{1}/?view=list'.format(olx_base_url, city)
+olx_url = '{0}/nieruchomosci/stancje-pokoje/{1}/?page='.format(olx_base_url, city)
 file_name = 'olx_room_data.csv'
-
-# get data from website
-response = get(olx_url)
-html_soup = BeautifulSoup(response.text, 'html.parser')
-
-# find all offers on page & get links
-offer_containers = html_soup.find_all('div', class_='offer-wrapper')
 offer_urls = []
 
-for offer in offer_containers:
-    offer_url = offer.find('a', href=True)
-    offer_urls.append(offer_url['href'])
+# get data from first website
+response = get(olx_url + str(page_number))
+print(olx_url + str(page_number))
+html_soup = BeautifulSoup(response.text, 'html.parser')
+
+# get number of pages
+number_of_pages = int(html_soup.find('a', attrs={'data-cy': 'page-link-last'}).getText())
+
+# process all pages
+for i in range(page_number, number_of_pages + 1):    
+    # get data from website
+    response = get(olx_url + str(page_number))
+    print("Processing page: {0}".format(olx_url + str(i)))
+    html_soup = BeautifulSoup(response.text, 'html.parser')
+
+    # find all offers on page & get links
+    offer_containers = html_soup.find_all('div', class_='offer-wrapper')
+
+    for offer in offer_containers:
+        offer_url = offer.find('a', href=True)
+        offer_urls.append(offer_url['href'])
 
 # initialize offer list
 offer_list = []
@@ -62,7 +74,7 @@ for idx, url in enumerate(offer_urls):
     offer_dict['region'] = location[1]
     offer_dict['district'] = location[2]
     offer_dict['price'] = offer_soup.find('div', class_='price-label').getText().strip('\n')
-    
+        
     raw_html_description = offer_soup.find('div', {'id': 'textContent', 'class': 'clr'}).getText()
     offer_dict['description'] = "".join(line.strip() for line in raw_html_description.split('\n'))
 
