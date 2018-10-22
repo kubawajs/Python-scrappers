@@ -1,18 +1,33 @@
 from requests import get
 from bs4 import BeautifulSoup
-import csv
+import csv, sys, getopt
 
-#statics
-city = 'poznan'
+# get parameters
+try:
+    opts, args = getopt.getopt(sys.argv[1:], "c:o:n:", ["city=", "ofile="])
+except getopt.GetoptError:
+    print("Invalid parameters.")
+    sys.exit(2)
+
+for opt, arg in opts:
+    if opt in ("-c", "--city"):
+        city = arg
+    elif opt in ("-o", "--ofile"):
+        outputfile = arg
+    elif opt in ("-n", "--offers-number"):
+        number_of_offers = arg
+
+# statics
+result_file_name = 'olx_room_data.csv' if not outputfile else outputfile
 olx_base_url = 'https://www.olx.pl'
 olx_url = '{0}/nieruchomosci/stancje-pokoje/{1}/?view=list'.format(olx_base_url, city)
 file_name = 'olx_room_data.csv'
 
-#get data from website
+# get data from website
 response = get(olx_url)
 html_soup = BeautifulSoup(response.text, 'html.parser')
 
-#find all offers on page & get links
+# find all offers on page & get links
 offer_containers = html_soup.find_all('div', class_='offer-wrapper')
 offer_urls = []
 
@@ -20,10 +35,10 @@ for offer in offer_containers:
     offer_url = offer.find('a', href=True)
     offer_urls.append(offer_url['href'])
 
-#initialize offer list
+# initialize offer list
 offer_list = []
 
-#process offer
+# process offer
 for idx, url in enumerate(offer_urls):
     # check if not an advertisement
     if(olx_base_url not in url):
@@ -57,7 +72,7 @@ for idx, url in enumerate(offer_urls):
 # save to file
 keys = ['city', 'region', 'district', 'price', 'Oferta od', 'Umeblowane', 'Rodzaj pokoju', 'Preferowani', 'description']
 
-with open('olx_room_data.csv', 'w', newline='', encoding='utf-16') as output_file:
+with open(result_file_name, 'w', newline='', encoding='utf-16') as output_file:
     dict_writer = csv.DictWriter(output_file, keys)
     dict_writer.writeheader()
     dict_writer.writerows(offer_list)
