@@ -2,10 +2,6 @@ from requests import get
 from bs4 import BeautifulSoup
 import csv
 
-# TODO: pagination
-# TODO: move city to parameter
-# TODO: move result file name to parameter
-
 #statics
 city = 'poznan'
 olx_base_url = 'https://www.olx.pl'
