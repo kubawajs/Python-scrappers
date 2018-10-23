@@ -4,9 +4,7 @@ import csv, sys, getopt, time, datetime
 
 # default parameters
 result_file_name = 'olx_room_data-{0}.csv'.format(datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S'))
-print(result_file_name)
-exit
-city = 'Warszawa'
+city = ''
 number_of_offers = 0
 page_number = 1
 
@@ -19,7 +17,7 @@ except getopt.GetoptError:
 
 for opt, arg in opts:
     if opt in ("-c", "--city"):
-        city = arg
+        city = arg + '/'
     elif opt in ("-o", "--ofile"):
         result_file_name = arg
     elif opt in ("-n", "--offers-number"):
@@ -27,8 +25,7 @@ for opt, arg in opts:
 
 # statics
 olx_base_url = 'https://www.olx.pl'
-olx_url = '{0}/nieruchomosci/stancje-pokoje/{1}/?page='.format(olx_base_url, city)
-file_name = 'olx_room_data.csv'
+olx_url = '{0}/nieruchomosci/stancje-pokoje/{1}?page='.format(olx_base_url, city)
 offer_urls = []
 
 # get data from first website
