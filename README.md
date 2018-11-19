@@ -1,2 +1,2 @@
-# Python-scrappers
-A set of scrappers for popular advertisement websites
+# Python-tools
+A set of Python tools, eg. ocr and web scrapping.
