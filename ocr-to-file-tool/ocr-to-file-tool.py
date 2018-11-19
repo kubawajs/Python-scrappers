@@ -4,13 +4,26 @@ except ImportError:
     import Image
 import pytesseract
 
-# TODO: image name as parameter
-# TODO: language as parameter
-# TODO: add to readme info about tesseract-ocr installation
-
-# Consts
+# default parameters
 tesseract_path = r'C:\Program Files (x86)\Tesseract-OCR\tesseract'
 language = 'pol'
+image_path = 'test/test-file.jpg'
+result_file_name = 'test/output.txt'
+
+# get parameters
+# try:
+#     opts, args = getopt.getopt(sys.argv[1:], "i:o:l:", ["image-path=", "output-file=", "lang="])
+# except getopt.GetoptError:
+#     print("Invalid parameters.")
+#     sys.exit(2)
+
+# for opt, arg in opts:
+#     if opt in ("-i", "--image-path"):
+#         city = arg
+#     elif opt in ("-o", "--output-file"):
+#         result_file_name = arg
+#     elif opt in ("-l", "--lang"):
+#         number_of_offers = arg
 
 # Setup tesseract
 pytesseract.pytesseract.tesseract_cmd = tesseract_path
@@ -21,12 +34,9 @@ pytesseract.pytesseract.tesseract_cmd = tesseract_path
 # Convert to image
 # print("Converting to image file...")
 
-# Text image to string
+# Save text to file
 print("Extracting text from image...")
-print(pytesseract.image_to_string(Image.open('test/test-file.jpg'), lang=language))
+with open(result_file_name, 'w', encoding='utf-16') as output_file:
+    output_file.write(pytesseract.image_to_string(Image.open(image_path), lang=language))
 
-# get a searchable PDF
-pdf = pytesseract.image_to_pdf_or_hocr('test/test-file.jpg', extension='pdf')
-
-# End
 print("Text extracted successfully!")
