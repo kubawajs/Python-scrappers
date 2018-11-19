@@ -2,7 +2,7 @@ try:
     from PIL import Image
 except ImportError:
     import Image
-import pytesseract
+import getopt, sys, pytesseract
 
 # default parameters
 tesseract_path = r'C:\Program Files (x86)\Tesseract-OCR\tesseract'
@@ -11,19 +11,19 @@ image_path = 'test/test-file.jpg'
 result_file_name = 'test/output.txt'
 
 # get parameters
-# try:
-#     opts, args = getopt.getopt(sys.argv[1:], "i:o:l:", ["image-path=", "output-file=", "lang="])
-# except getopt.GetoptError:
-#     print("Invalid parameters.")
-#     sys.exit(2)
+try:
+    opts, args = getopt.getopt(sys.argv[1:], "i:o:l:", ["image-path=", "output-file=", "lang="])
+except getopt.GetoptError:
+    print("Invalid parameters.")
+    sys.exit(2)
 
-# for opt, arg in opts:
-#     if opt in ("-i", "--image-path"):
-#         city = arg
-#     elif opt in ("-o", "--output-file"):
-#         result_file_name = arg
-#     elif opt in ("-l", "--lang"):
-#         number_of_offers = arg
+for opt, arg in opts:
+    if opt in ("-i", "--image-path"):
+        image_path = arg
+    elif opt in ("-o", "--output-file"):
+        result_file_name = arg
+    elif opt in ("-l", "--lang"):
+        language = arg
 
 # Setup tesseract
 pytesseract.pytesseract.tesseract_cmd = tesseract_path
